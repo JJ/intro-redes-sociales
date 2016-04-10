@@ -1,0 +1,672 @@
+%Documento con todos los articulos publicados por mi.
+\documentclass{article}
+\usepackage[latin1]{inputenc} % tildes
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[Spanish]{babel}
+
+\title{Redes sociales: una introducción}
+
+\author{Juan Julián Merelo Guervós, {\tt jj@merelo.net}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+
+Las redes no son sólo eso que se echa al mar para coger acedías, ni
+siquiera eso que se usa para chatear con los coleguis. Una red es una
+forma abstracta de visualizar una serie de sistemas, y, en general,
+casi todos los sistemas complejos.
+
+Las redes, al fin y al cabo, están compuestas de {\em nudos}, que se
+llaman habitualmente {\em nodos}, y de enlaces entre ellos; que se
+llaman {\em aristas}, si es que son {\em flechas} que van de un nodo
+al otro, con un sentido definido, o bien {\em arcos}, si es que la
+relación es recíproca, o por decirlo de otro modo, las flechas tiene
+puntas en los dos extremos.
+
+Efectivamente, Internet es una red. Simplificando un poco, los {\em
+arcos} son los diferentes medios que sirven para enlazar dos
+ordenadores conectados a la red (inalámbricos o alámbricos), mientras
+que los nodos son, efectivamente, los diferentes chismes
+computacionales conectados a la red. Pero también es una red un grupo
+de páginas web, que usen hiperenlaces para referirse unas a otras. En
+general, en este caso se tratará de {\em aristas}, porque los
+hiperenlaces tienen una dirección definida (de la página que enlaza a
+la enlazada). 
+
+Si esas páginas web están escritas por una sola persona, o son
+directamente páginas web personales, los enlaces pueden reflejar una
+relación {\em social} entre los creadores de la web, que se podría
+expresar vagamente como {\em conoce-a}, el escritor de una web que ha
+incluido un enlace a la segunda web {\em conoce-al} autor de esa
+segunda web. Las redes sociales son también redes complejas, aunque
+usan una terminología ligeramente diferente: los nodos son {\em
+agentes}, porque hacen algo, mientras que las aristas o arcos
+expresan, habitualmente, una relación social tal como {\em conoce-a},
+{\em es-amigo-de}, o {\em han-comido-spaghetis-juntos}. 
+
+\section{Calculando relaciones sociales}
+\label{sec:relaciones}
+
+El reducir las relaciones sociales a un grafo permite hacer una serie
+de estudios sobre esa maraña, de la cual se pueden extraer
+conclusiones desde simples (cuántas personas intermedias harían falta
+para conseguir el número de móvil de Beckham) hasta complejas (quién
+es el {\em agente} con más influencia dentro de una red social. Veamos
+una red relativamente simple: la de algunos jugadores de fútbol, con
+la relación {\em han jugado en el mismo equipo} en la siguiente
+\ref{fig:redfutbol}.
+
+\begin{figure}[ht]
+\centerline{\includegraphics[width=10cm]{redfutbol.eps}}
+\caption{Red de relaciones entre 6 jugadores de fútbol: Figo, Van
+Nistelrooi, Beckham, Ronaldo y Rivaldo. Algunos han jugado juntos en
+el Real Madrid, otros en el Manchester United, y otros en el
+Barcelona. Supongo que, esperando suficiente tiempo, todos habrán
+jugado en el mismo equipo que todos, porque Rivaldo anda ahora en no
+sé qué equipo griego, Kluiwert en el Valencia, y Figo ya no está en el
+Madrid.\label{fig:redfutbol}} 
+\end{figure}
+
+Lo primero que hay que hacer para analizar esta red es expresarla como
+una {\em matriz de contacto}, que tenga como filas y columnas los {\em
+actores} o {\em agentes} de esta red social; esta matriz se muestra en
+la tabla \ref{tab:redfutbol}.
+
+\begin{table}
+\begin{tabular}{lcccccc}
+ &Van Nistelrooi & Beckham & Figo & Ronaldo & Rivaldo & Kluiwert\\
+Van Nistelrooi & 0 & 1 & 0 & 0 & 0 & 0 \\
+Beckham & 0 & 0 & 1 & 1 & 0 & 0 \\
+Figo & 0 & 0 & 0 & 1 & 1 & 1 \\
+Ronaldo & 0 & 0 & 0 & 0 & 1 & 1 \\
+Rivaldo & 0 & 0 & 0 & 0 & 0 & 1 \\
+Kluiwert & 0 & 0 & 0 & 0 & 0 & 0 \\
+\end{tabular}
+\caption{Matriz de relaciones entre los diferentes jugadores de la red
+{\em social} futbolística. Si existe un enlace entre un jugador y
+otro, el elemento correspondiente de la matriz tendrá el valor 1. Se
+muestra (convencionalmente) sólo el triángulo superior de la matriz,
+aunque se entiende que, tratándose de una matriz simétrica, los
+elementos por debajo de la diagonal tienen el mismo valor que los que
+hay por encima de la diagonal. \label{tab:redfutbol}}
+\end{table}
+
+Esa tabla se puede introducir en una hoja de cálculo, o en un fichero
+CSV ({\em comma separated value}, valores separados por comas (u otro
+separador, tal como el punto y coma), es
+decir, cada fila de la matriz en una línea, sus valores separados por
+comas), de esta forma:
+\begin{verbatim}
+Van Nistelrooi ; 0 ; 1 ; 0 ; 0 ; 0 ; 0
+\end{verbatim}
+y usarla en alguno de los programas de análisis de redes sociales que
+permitirán, para empezar, visualizarla, tal como se ve
+en la figura \ref{fig:redfutbol:pajek}. 
+
+\begin{figure}[ht]
+\centerline{\includegraphics[width=10cm]{redfutbol-pajek.eps}}
+\caption{Red futbolística representada por el programa Pajek a partir
+de un fichero tal como el anterior. La simple representación de la red
+de forma óptima (es decir, de forma que el círculo que representa a
+cada agente está más cercano a aquellos con los que está unido, y más
+lejos de aquellos con los que no tiene ninguna relación) permite
+apreciar estructuras tales como el cuadrado que forman Kluiwert,
+Ronaldo, Rivaldo y Figo. \label{fig:redfutbol:pajek}} 
+\end{figure}
+
+Entre otras cosas que permite apreciar la figura
+\ref{fig:redfutbol:pajek} es el hecho de que la red (o {\em grafo}; en
+realidad se trata de eso) está conectada; es decir, siguiendo vínculos
+puedes ir de cualquier jugador a cualquier otro jugador. Si quisieras
+el móvil de Van Nistelroi, no tendrías más que preguntar a cualquiera
+de ellos, y acabarían dándotelo, antes o después. Pero evidentemente,
+el número de pasos intermedios variará dependiendo de a quién le
+preguntes. ¿Cuánto variará? En media, un programa de análisis tal como
+el Pajek \cite{Pajek} o UCINET \cite{UCINET} dará un resultado tal
+como el siguiente:
+\begin{verbatim}
+Average distance (among reachable pairs) = 1.533
+Distance-based cohesion = 0.389
+\end{verbatim}
+Es decir,  que la distancia media entre dos agentes cualesquiera es de
+1.533; habrá que usar entre una y dos conexiones para alcanzar a un
+futbolista cualesquiera (siempre que seas uno de los otros, claro).
+
+Se supone, claro está, que se sigue el camino más corto. A este camino
+más corto se le denomina {\em geodésica}, por similitud a las {\em
+geodésicas} que son las curvas que siguen el camino más corto entre
+dos puntos del mapa. Esa distancia media es la media de las distancias
+más cortas entre todos los elementos de la red, tomados uno por
+uno. Para calcularlo habría que hacer una matriz similar a la
+anterior, lo que queda como ejercicio para el lector. 
+
+Otra cantidad interesante es el diámetro de la red. ¿Qué tamaño tiene?
+Así, a ojo de buen cubero, sería 4: la distancia mayor entre dos
+elementos de la red (siempre que se siga una de esas geodésicas,
+claro). Esta cantidad es interesante, porque refleja lo {\em grande}
+que es la red. Más  que tomada de forma aislada, lo que interesa es
+ver cómo evoluciona el diámetro de la red cuando se añaden nuevos
+nodos. Podría pensarse que siempre que se añada un nodo nuevo
+aumentará el diámetro; pero, mirando esta red, sólo aumentará de
+diámetro si se añade un nodo que esté unido solo a Van Nistelrooi
+(pongamos, por ejemplo, Michael Owen).
+
+También es interesante ver cómo se agrupan los enlaces de la red. En
+el caso de Figo y Ronaldo se puede decir aquello de los amigos de mis
+amigos son tus amigos: todos los que reciben un enlace de uno, reciben
+un enlace de otro; es decir, el enlazado es {\em transitivo}. Si
+Ronaldo enlaza a Kluiwert, y Figo enlaza a Ronaldo, Figo también
+enlaza a Kluiwert. Sin embargo, no siempre es así: Beckham ha estado
+en un equipo con Figo, y Van Nistelroi con Beckham, pero
+evidentemente, y por la presente, Van Nistelroi no ha coincidido con
+Figo (aunque acabarán coincidiendo en algún equipo de Qatar antes de
+retirsrse, seguro). Esta tendencia a agruparse se denomina {\em
+coeficiente de clustering}, y representa la tendencia natural de la
+gente a {\em transmitir} relaciones. Un grafo con un coeficiente de
+clustering alto tendrá relaciones sociales muy tupidas, con todos más
+o menos relacionados con todos; por el contrario, un coeficiente de
+clustering bajo representaría relaciones de un tipo particular,
+generalmente no {\em transmisibles}. 
+
+\section{Grafos bipartitos}
+
+En realidad, el gráfico con el que hemos estado tratando anteriormente
+está compuesto de dos tipos de {\em actores}: los futbolistas y los
+equipos de fútbol. Cada futbolista estaría relacionado con el equipo
+de fútbol en el que ha estado, y sólo habría enlaces entre futbolistas
+y equipos, pero no de los futbolistas o de los equipos entre si. A
+Este tipo de grafos se les llama {\em grafos bipartitos}. Los grafos
+bipartitos tienen dos tipos de nodos, tal como aparece en la figura
+\ref{fig:bipartito} 
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=6cm]{bipartito.eps}}
+\caption{Grafo bipartito con nodos de tipo {\em azul} y nodos de tipo
+{\em rojo}. Los enlaces van solamente de los nodos azules a los
+rojos. \label{fig:bipartito}}  
+\end{figure}
+
+Los grafos bipartitos, sin embargo, son más fáciles de estudiar
+convirtiéndolos en unipartitos o grafos {\em modo-uno}: para ello
+simplemente se {\em proyectan}, eliminando los nodos de uno de los dos
+tipos, y sustituyéndolos por la relación {\em estar conectados al
+mismo nodo}: dos nodos {\em rojos} estarán enlazados si, y solo si,
+están enlazados al mismo nodo en el grafo bipartito. El gráfico
+\ref{fig:bipartito} se convierte en el grafo que aparece en la figura
+\ref{fig:modo1}, de modo 1: 
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=6cm]{modo1.eps}}
+\caption{Grafo unipartito, o de modo 1, generado a partir del gráfico
+bipartito representado en la figura \ref{fig:bipartito}. \label{fig:modo1}}  
+\end{figure}
+
+La distinción entre los gráficos de uno u otro tipo es importante,
+sobre todo, a la hora de calcular un gráfico aleatorio que tuviera las
+mismas propiedades que el grafo estudiado. Por ejemplo, el coeficiente
+de clustering, mencionado anteriormente, de un grafo generado
+aleatoriamente será diferente si procede de un grafo bipartito que si
+procede de uno con nodos de un solo tipo; en el caso del grafo
+bipartito, evidentemente, será mayor.
+
+\section{Mundo pequeño}
+\label{sec:sw}
+
+La casualidad de que dos futbolistas que han jugado en los juveniles
+del Racing se encuentren de repente jugando en un equipo de la segunda
+división china hace que se hable de que el mundo es un pañuelo, lo que
+corresponde a la expresión inglesa {\em It's a small world}. Quién no
+se ha montado en un avión, o un autobús, y descubierto que el que está
+sentado al lado de uno es primo del cuñado del barbero del pueblo
+donde hizo la mili, o algo así, lo que conduce a la creencia popular
+de que todo el mundo está a 6 grados de separación, 6 {\em apretones
+de manos} de cualquier otra persona, sea un masai de Kenya o un Hmong
+de las montañas del Yemen. 
+
+Al parecer, fue Guglielmo Marconi, el inventor del telégrafo, el que
+dijo (y esto es posiblemente apócrifo) que dos personas cualesquiera
+en elmundo estaban esperadas por una media de 5\'83 estaciones. Y
+alguien, en los años sesenta, se puso a probar si tal cosa era
+cierta. Fue Stanley Milgram, en el primero del que acabó siendo una
+serie de experimentos \cite{milgram67}], el que intentó medir
+cuántas personas, efectivamente separaban a todo el mundo de un agente
+de Bolsa que residía en una ciudad de Masachussets, por el
+procedimiento de dar a un grupo de personas una carta, y pedir que se
+la hicieran llegar a ese agente de bolsa de la forma más corta
+posible, con la condición de que tenían que entregarla en mano. Y vio que,
+efectivamente, la {\em moda estadística}, es decir, el número de
+personas por las que había pasado la carta en la mayor parte de los
+casos, era (más o menos) cinco (véase figura \ref{fig:Milgram}, lo que
+correspondería a seis grados de 
+separación. De ahí la expresión de los 6 grados de separación, que se
+convertiría posteriormente en una obra de teatro y película (con Will
+Smith, Donald Sutherland y Stockard Channing), y en una página
+web. {\em 6 grados de separación hasta Kevin Bacon}.
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=6cm]{histograma-Milgram.eps}}
+\caption{Histograma del número de personas por las que pasó la carta
+en uno de los experimentos de Milgram. De los que efectivamente
+llegaron a su destino, la moda fue 4 personas, correspondiente a 5
+grados de separación.  \label{fig:Milgram}}  
+\end{figure}
+
+En este último {\em juego} se usaba el grafo bipartito de películas y
+actores, proyectado al grafo homogéneo de actores y la relación {\em
+ha participado en la misma película}. El diámetro de este grafo es
+bastante mayor que los célebres 6 grados, pero Kevin Bacon tiene una
+posición relativamente buena dentro del mismo: su grado medio de
+separación a todo el resto del grafo está entre 3 y 4; por lo que, en
+media, sólo harán falta 3 o 4 películas para encontrar la relación
+entre Kevin Bacon y cualquier otro actor, sea John Travolta o Tita
+Merelo. 
+
+Las redes pequeñas son un pañuelo. Pero redes muy grandes (como la de
+actores, por ejemplo, o la Internet) pueden serlo también. Partiendo
+de una red regular, Watts y Strogatz \cite{watt98} probaron
+que, añadiendo unos pocos enlaces, el diámetro de la red disminuía
+drásticamente, mientras que el coeficiente de clustering no variaba
+sustancialmente; sin embargo, el coeficiente de clustering de una red
+mundo pequeño es mayor que en una red aleatoria; de forma que, si no
+se pueden hacer mediciones a gran escala de la red, partiendo del
+coeficiente (conocido) de clustering de una red aleatoria con el
+número de nodos y enlaces de la red que se está midiendo, y
+comparándolo con el coeficiente de clustering de esta, se puede
+tener una primera aproximación a si la red es de tipo {\em mundo
+pequeño} o no.
+
+Este tipo de medidas se pueden aplicar también a mundos paralelos. ¿Es
+un mundo pequeño la red de {\em conocimientos} de los superhéroes
+(entendiéndose como tal haber aparecido en el mismo número de un
+cómic)? Miró et al \cite{superheroes} hicieron diferentes medidas
+sobre el universo Marvel (que aparece en los cómics de este sello), y
+encontró que, a pesar de tratarse de un mundo pequeño, su coeficiente
+de clustering era relativamente pequeño, aunque había ciertas
+super-estrellas sociométricas: el Capitán América y Spiderman, que
+habían aparecido en cientos de {\em team-up} con otros
+superhéroes. Especialmente el Capi, que ha sido miembro de los
+Vengadores desde que era cabo.
+
+Las redes mundo pequeño tienen una característica importante: cuando
+aumentan de tamaño, su diámetro aumenta {\em lentamente}. ¿Cómo de
+lentamente? Si pensamos que aumenta linealmente con el número de
+nuevos nodos, ya nos estamos pasando de rápidos. Incluso si pensamos
+en la mitad, o en la raíz cuadrada. Aumento {\em lento}, en este caso,
+significa que aumenta logarítmicamente. Bastante lento: si se añaden
+1000 nuevos nodos, el diámetro podrá aumentar en 3. 
+
+A las redes sociales les suele suceder esto; casi todas son de tipo
+{\em mundo pequeño}. Otras redes tienden a serlo: por ejemplo, la red
+de conexiones aéreas de un país como los Estados Unidos, o la red de
+carreteras de España. Y como en estas, claro está, hay atascos. 
+
+En los nodos de las redes mundo pequeño se suele producir un efecto
+denominado {\em canalización}. Todos los nodos están conectados a
+todos los demás a partir de unas pocas conexiones, pero su {\em
+alcance} al resto del mundo no está repartido de forma equitativa
+entre todas ellas. Hay una, o unas pocas, a través de las cuales pasan
+la mayoría de las geodésicas. De hecho, en el experimento de Milgram
+se vio algo similar: la mayoría de las cartas le llegaron al agente de
+Bolsa a través de un colega suyo. Y en la red de coautorías de
+trabajos científicos sucede algo similar: Newman \cite{newman01} halló que la
+mayor parte de los {\em contactos} le llegaban a través de un coautor
+suyo. Y seguramente tú mismo, lector, si piensas como conociste a tu
+círculo de amistades te darás cuenta que la mayoría te los presentaron
+sólo una o dos personas. Este fenómeno lleva a personas como Malcolm
+Gladwell de hablar del fenómeno de los {\em conectores} en su libro
+{\em The Tipping Point} \cite{}: estos conectores efectivamente unen a
+gran parte de su red social con el resto del mundo.
+
+\section{Evolución de las redes}
+
+Sin embargo las redes se hacen, no nacen, y dependiendo de cómo vayan
+creciendo, el tipo de red y sus propiedades serán diferentes. Por eso,
+se han propuesto diferentes modelos de crecimiento de redes. El más
+antiguo es el de Erdös-Renyi, que es un modelo de crecimiento de redes
+aleatorias, en el que cada vez que se añade un nodo nuevo, se enlaza a
+uno aleatorio. Como modelo, no está mal, y tiene propiedades
+interesantes, pero hay pocas redes en el mundo real que se comporten
+así, siempre hay nodos más chulos que otros. Por eso, Barabási
+\cite{emerg:barabasi1999,barabasi} y otros propusieron un modelo denominado doe {\em
+enlazado preferencial}: los nodos {\em mejores} se enlazan con más
+probabilidad que los peores; aunque en realidad, sólo se sabe si son
+los mejores por el número de enlaces que ya tienen; por lo tanto, es
+un modelo poco equitativo: da a los que tiene más, aunque por lo menos
+no quita a los que tienen menos.
+
+Las redes que resultan de estos dos modelos se diferencian, al menos,
+en lo que se denomina el {\em componente gigante}, es decir, un grupo
+de nodos enlazados entre si, y que agrupan a la mayoría de los nodos
+de la red. Se produce también un efecto {\em percolación}: llega un
+punto en el que los diferentes componentes aislados se unen. Sin
+embargo, en las redes con enlace preferencial el componente gigante
+aparece con muchos menos nodos, ya que los nodos {\em entrantes} se
+conectan con más probabilidad a los nodos que ya tienen muchas
+conexiones, que, evidentemente, estarán conectados al resto del
+componente. 
+
+En grafos dirigidos se produce una situación similar, la que se
+muestra en la figura \ref{fig:componente}
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=8cm]{componente-gigante.eps}}
+\caption{ Esquema de un grafo dirigido {\em maduro}. Aparte del
+componente gigante o principal (en el centro, etiquetado con {\em
+main}, hay una parte que sólo enlaza o es enlazado desde él (las {\em
+asas}, pequeños componentes que enlazan o son enlazados, pero que
+están fuera del componente principal, islas y {\em tentáculos} o {\em
+túneles} que enlazan componentes {\em lejanos}.  \label{fig:componente}}  
+\end{figure}
+
+El componente gigante aparece también en casi todas las redes
+sociales. Por ejemplo, en el estudio de Newman y Girvan de las redes
+de coautorías todos los campos tienen un componente gigante que agrupa
+más del 50\% de los autores; en algunos campos, agrupa casi al 50% de
+los mismos. En cuanto a la web, los estudios de Huberman han
+descubierto que el componente principal gran parte de los sitios web. 
+
+\section{Leyes de potencias}
+
+El que los ricos se hagan más ricos, una situación habitual en muchas
+redes sociales, lleva a la denominada Ley de Pareto, que se suele
+enunciar como ``El 20\% de la población tiene el 80\% de las
+riquezas''. En realidad, la situación se puede generalizar a lo que se
+denomina una {\em ley de potencias}: si la veriable independiente y la
+dependiente se representan en escala logarítmica, la línea que mejor
+se adapta a los puntos es una línea recta. En el caso de que la
+variable dependiente sea el {\em orden} en el que aparecen las
+cantidades que se representan, se le suele denominar ley de Zipf.
+
+Por ejemplo, muchas redes siguen una ley de Zipf en el número de
+enlaces. Los enlaces del nodo más enlazado son un múltiplo fijo del
+segundo más enlazado (digamos, 2 veces más), éste a su vez del tercero
+más enlazado, y así sucesivamente. El primero más enlazado tendrá, por
+tanto, 8 enlaces más que el cuarto más enlazado. 
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=8cm]{lectoresblogs-crop.eps}}
+\caption{Gráfico que representa el número de lectores de un grupo de
+blogs frente al lugar que ocupan, puestos por orden. Los datos
+experimentales se representan con un rombo rojo, y el ajuste a una ley
+de potencias se representa mediante una línea verde. Los datos están
+extraidos de la {\em Primera encuesta de lectores/escritores de
+blogs}, preparada por Tintachina (\textsf{http://tintachina.com} y
+Blogpocket \textsf{http://blogpocket.com}).  \label{fig:zipf}}  
+\end{figure}
+
+Esto provoca a su vez una serie de fenómenos: nodos más enlazados
+serán más conocidos, y en páginas webs, o específicamente en
+bitácoras, el número de visitas (de las cuales muchas proceden de las
+otras bitácoras que le enlazan, o proceden de un buscador y son
+causadas por el {\em pagerank} de Google elevado debido a esos mismos
+enlaces) también seguirá una ley de Zipf, tal como se muestra en la
+figura \ref{fig:zipf}, extraida de la primera encuesta sobre
+lectores/autores de bitácoras en la blogosfera
+(\textsf{http://tintachina.com/archivo/los\_weblogs\_mas\_leidos.php}).
+
+Pero también aparecen leyes de potencias en otros sitios: en la
+distribución de nodos con un número de enlaces
+determinado. Representando en abcisas el número de enlaces, y en
+ordenadas el número de nodos con ese número de enlaces, en las redes
+con enlazado preferencial, y en muchas redes sociales (por ejemplo, en
+la blogosfera) se sigue una ley de potencias: habrá muchos nodos con
+ningún enlace, menos (en una proporción fija) con un enlace, y así
+sucesivamente. Pero una característica importante de las leyes de
+potencias es que su valor disminuye más lentamente que una
+exponencial, lo que da lugar a una {\em cola larga}, o {\em fat
+tail}. Esta cola larga, al contrario de lo que se suele pensar
+habitualmente, lo que dice es que ``sucesos'' extremos (en este caso,
+nodos con un número extremo de enlaces) suceden con una probabilidad
+no nula. La forma habitual de verlo es darle la vuelta a esta gráfica,
+y mostrar en abscisas el número de nodos y en ordenadas el número de
+enlaces: la cola larga nos diría que hay muchos nodos con ningún o pocos enlaces,
+pero, lo más importante, que si tomamos en consideración el número
+total de enlaces (o de compras, o de visitas) en los nodos más
+enlazados, éste será mayor que el número de enlaces total de los nodos
+más enlazados. Sin embargo, eso depende del exponente de la ley de
+potencias. 
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=8cm]{leyesdepotencias.eps}}
+\caption{Representación de leyes de potencias con diferente
+exponente, $f(x) = x^p$. En ordenadas se representa la suma acumulativa de los
+valores $f(x)$, para $x < x_0$. Los dos gráficos que aparecen en la
+parte baja de la gráfica corresponden a valores de p menores que 1, y
+los dos en la parte alta, a valores mayores que 1. Una explicación más
+completa en el sitio donde apareció publicado originalmente,
+\textsf{http://atalaya.blogalia.com/historias/22196}. \label{fig:leypotencias}}  
+\end{figure}
+
+Como se ve en la figura \ref{fig:leypotencias}, las leyes de potencias
+se comportan de forma muy diferente dependiendo del exponente. En esta
+figura se presenta la suma acumulativa de los valores de una función,
+para $x$ menor que el valor de la abscisa representado. Por ejemplo,
+se ve que los valores de $x < 100$ acumulan el 5\% del valor
+(aproximadamente) para la gráfica inferior (en la que el exponente es
+$1/2$), aproximadamente el 20\% para la siguiente, pero casi el 100\%
+para las dos siguientes (que son leyes de potencias con exponentes
+mayores que uno). Lo que implica que el fenómeno de la {\em cola
+larga} {\em funciona} sólo para leyes de potencias con exponente menor
+que uno: los primeros ``nodos'' acumulan sólo un porcentaje pequeño
+del valor. Por ejemplo, en el caso de un exponente igual a $3/4$, los
+valores mayores que 100 acumulan aproximadamente el 80\% del valor
+total. Una medida no demasiado reciente \cite{blogomapa1} da el
+resultado que se muestra en la figura \ref{fig:blogpowerlaw}.
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=8cm]{powerlaw.eps}}
+\caption{Gráfica de puesto vs. número de enlaces entrantes, en la
+blogosfera española hace un año. Los datos fueron tomados del
+Blogómetro (\textsf{http://blogometro.blogalia.com}) \cite{blogs1}, y por lo tanto, en
+aquella época, eran los más exhaustivos disponibles. El ajuste según
+una ley de potencias no es demasiado bueno. \label{fig:blogpowerlaw}}
+\end{figure}
+
+Esos puntos experimentales se pueden ajustar según una ley de
+potencias con un exponente menor que uno: $338x^{-0.58}$, por lo que
+cabría suponer que en la blogosfera española sí se produce ese
+fenómeno de {\em colas largas} mencionado anteriormente. En la
+blogosfera americana, el exponente negativo es 0.8309, algo
+superior. Es un mundo más cruel, sin lugar a dudas. Con plutócratas
+más plutócratas. 
+
+Por eso es interesante ver según qué ley de potencias se comporta
+redes tales como la blogosfera. Si el exponente es mayor que uno,
+aparecerán esas {\em colas largas}, la blogosfera será igualitaria, y
+valdrá más ser cola de león que cabeza de ratón. Sin embargo, si el
+exponente es mayor que uno, los plutócratas blogosféricos acumularán
+la mayor parte de prácticamente todo: enlaces, visitas y Nokias
+enviados para que se hable de ellos. Esos plutócratas son los
+incluidos en la denominada {\em lista A}, o grupo de bitácoras
+acaparadoras que están siempre en los {\em top} de todo. Lo que está
+bien, pero no hay que olvidar que cualquier medida de la red da una
+idea estática de la red en cada momento, y que quien tiene más
+enlaces, o visitas, o comentarios hoy, puede dejar de tenerlos
+mañana. Así que ánimo, que entrar en la blogosfera es fácil, y cada
+uno tiene derecho a sus 5 minutos/5000 visitas/500 comentarios de fama
+(la cola larga proveerá). En todo caso, no está tan claro que la
+blogosfera, al menos la española, siga una ley de potencias. Más o
+menos la sigue, y se acerca cada vez más \cite{powerlaw:wbc2004}.
+
+Lo que tampoco está nada claro es que las redes que aparentemente
+siguen una ley de potencias la sigan de verdad. Y lo es porque en el
+Mundo Real$^TM$ es muy difícil tener todos los enlaces posibles; es
+difícil ser exhaustivo a la hora de hacer un mapa incluso de los
+hiperenlaces en un grupo de páginas web. Para empezar, porque un
+enlace es algo efímero: puede desaparecer en un momento determinado, o
+puede desaparecer el destino del enlace, o haber cambiado de
+dirección, o, como mucho, podrás abarcar un grupo finito de páginas
+web. Todo ello introduce sesgos en el muestreo, y hay quien afirma que
+muchas de las leyes de potencias medidas son en realidad exponenciales
+submuestreadas; es decir, que si se usan suficientes nodos y se toman
+en consideración todos los enlaces, las leyes de potencias
+desaparecerán. En realidad, el enlazado preferencias no se da
+en el Mundo Real$^TM$. Para empezar, un pobre nodo que entre en una
+red no suele tener una visión completa de la misma, por lo tanto no
+puede enlazar preferencialmente al que más enlaces tenga; o puede que,
+simplemente, no pueda ver el número de enlaces (lo que es totalmente
+cierto con el número de enlaces entrantes: es prácticamente imposible
+calcularlo de forma precisa). Y para seguir, los enlaces desaparecen y
+se transforman, por lo que, lo que tenemos en un momento determinado,
+es algo casi totalmente diferente de una red con ley de potencias. Por
+ejemplo, aparecen leyes log-normales (% esto qué diablos es
+) o simplemente exponenciales.
+
+Las redes que siguen una ley de potencias se suelen denominar {\em
+libres de escala}, por alguna razón recóndita que indica que no hay
+una {\em escala} preferida, o número de enlaces preferido, con
+respecto a los demás. Las redes aleatorias siguen una distribución de
+{\em Poisson} en cantidades tales como el número de enlaces; sin
+embargo, las redes libres de escala siguen una ley de potencias en la
+que la {\em moda} estadística seguida es, en realidad, el número
+mínimo de enlaces medido (0 o 1), y la media depende del exponente de
+la ley de potencias, aunque no es un ``lugar'' ni una ``escala''
+destacada dentro de la red. 
+
+En resumen, que las redes complejas, y entre ellas las redes sociales,
+están cubiertas casi por doquier por leyes de potencias, especialmente
+en el número de enlaces y cantidades relacionadas con los mismos. Pero
+esas leyes de potencias nunca están claras, y en algunos casos, pueden
+aparecer ciertas desviaciones con respecto a la ley de potencias {\em
+perfecta}.
+
+\section{¿Cuál es tu red preferida?}
+
+Que es como preguntar a quién se quiere más, si al padre o a la
+madre. ¿Qué redes son más interesantes: las {\em mundo pequeño} o las
+{\em libres de escala}? 
+
+En principio, las libres de escala. Muchas redes son mundo pequeño, y
+eso no las hace especialmente interesantes. Es cuestión sólo de poner
+unos cuantos enlaces bien dirigidos, unas cuantas
+``circunvalaciones'', y casi cualquier red se puede convertir en una
+red mundo pequeño. 
+
+Sin embargo, las redes que siguen una ley de potencias son bastante
+más interesantes, porque hablan de unos procesos de evolución 
+algunas veces evidentes, pero en otros caso difíciles de encontrar. Si
+además tienen la propiedad de ser mundos pequeños, se convierten en
+doblemente interesantes. Las redes sociales que aparecen en la
+blogosfera son habitualmente de este tipo, y eso las hace más o menos
+interesantes. 
+
+Estas redes son también interesantes desde otro punto de vista: la
+vulnerabilidad a {\em ataques}. Una red ley de potencias es bastante
+más vulnerable: eliminando sistemáticamente los nodos más conectados,
+se acaba rápidamente con la conectividad global de la vez, y con menos
+rapidez, va aumentando el diámetro de la red. Sin embargo, en una red
+mundo pequeño ese aumento del diámetro es mucho más lento, y hay que
+eliminar muchos nodos para notar una disminución notable en el
+diámetro. Por ejemplo, se ha sugerido que para librar a una red de
+virus (%buscar cita
+basta con desinfectar y mantener desinfectados los nodos más
+conectados, es decir, aquellos que tengan más gente en la libreta de
+direcciones. Sin embargo, la efectividad de esa medida es
+relativamente pequeña si, además de tratarse de una red libre de
+escala (como es el caso), es una ley de potencias. Lo mismo ocurre con
+la red de carreteras: su vulnerabilidad es relativamente grande, dado
+que se trata generalmente de una red libre de escala. Si se produce
+una congestión en alguno de los nodos más conectados, la red se viene
+abajo rápidamente.
+
+\section{Buscando el ombligo}
+
+Se cree como se cree una red, hay nodos de una red que son más iguales
+que otros. Los que tienen más enlaces, entrantes, salientes o
+indiferentes, están destacados, pero no siempre tienen porqué ser los
+más importantes. Imaginemos una red como una red viaria, por donde
+tienen que pasar cosas (lo que sucede bastante a menudo). Los nodos
+con más importancia serán los más inevitables, es decir, aquellos por
+los que hay que pasar más inevitablemente cuando se vaya de un punto a
+otro de la red. Lo mismo ocurrirá con los enlaces: los más inevitables
+tendrán, forzosamente, más importancia, porque, en caso de ser
+eliminados, dividirán o incomunicarán una parte mayor de la red.
+
+A esta {\em inevitabilidad} se le suele denominar {\em centralidad} o
+{\em betweenness} (lo que cabría traducir más literalmente como {\em
+enmediedad}, si es que tal palabro existiera en castellano)
+\cite{freeman77}. La definición de {\em enmediedad}, o {\em
+betweenness centrality}, es la proporción de geodésicas (recordarlas
+de \ref{sec:relaciones}) que pasan por el nodo o arista. 
+
+La centralidad es una cantidad bastante intuitiva; sobre todo si hay
+efectivamente alguna forma de percibir esos ``flujos'' que pasan por
+la red. En centro de la ciudad, habitualmente, es la zona con una
+mayor inmediatez. Y también sucede en las redes de ferrocarriles, tal
+como se ve en la figura \ref{fig:madrid}
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=10cm]{zonal_madrid_grande.eps}}
+\caption{Mapa zonal de cercanías en Madrid. Las estaciones con mayor
+tráfico son también las que tienen más enlaces: las de Atocha y la de
+Chamartín. Y de hecho, esas son las estaciones con mayor
+centralidad. \label{fig:madrid}} 
+\end{figure}
+
+Calculando la centralidad de las estaciones de cercanías, también
+denominada centralidad de Freeman, se obtiene la figura
+\ref{fig:madrid:fb}.
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=10cm]{freeman-betweenness-madrid.eps}}
+\caption{Gráfico de betweenness de Freman no normalizada para las
+estaciones con más valor. Sobresale Chamartín, pero también Atocha y,
+curiosamente, las estaciones más cercanas a Atocha y Chamartín, que a
+su vez actúan como conexión entre varias líneas, tales como Villaverde
+Alto y Bajo y Villalba. \label{fig:madrid:fb}} 
+\end{figure}
+
+En la figura anterior se muestran los valores de betweenness para las
+diferentes estaciones. Atocha es la que mayor valor tiene, seguido por
+Chamartín. Posiblemente por eso los ataques terroristas del 11-M
+fueron dirigidos a la estación de Atocha, porque intuitivamente es la
+que mayor tráfico tiene, y además, al cerrarse, paraliza una parte
+mayor de la red (la línea amarilla, azul, murada... pero también la
+roja, la verde: prácticamente todas las líneas se ven afectadas por su
+paralelización). Teniendo en cuenta que Atocha es, además, una
+estación de metro y de ferrocarril, su centralidad con respecto a
+otras redes es también bastante alta. 
+
+En cuanto a personas, la centralidad a veces se suele igualar con {\em
+popularidad}, pero también con esos {\em conectores} de los que hemos
+hablado anteriormente (en la sección \ref{sec:sw}). Haciendo una
+pequeña encuesta en el curso de Nuevas Tecnologías en Internet, en el
+que se impartió por primera vez este tutorial, se encontró que la red
+de conexiones es la que aparece en la figura \ref{fig:nti}.
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=10cm]{red-nti.eps}}
+\caption{Red social del curso de Nuevas Tecnologías en Internet, donde
+los nodos son el alumnado y profesorado del mismo, y los enlaces
+representan la relación {\em conoce a} (previo al curso). Por pura
+casualidad, los profesores son los que tienen el nombre en minúsculas
+y los alumnos están en mayúsculas. En redes tan pequeñas es difícil
+apreciar de qué tipo es, pero sí se aprecian ciertos grupos (como el
+que forman los profesores) y una {\em estrella} centrada en Pablo
+García Tahoces. \label{fig:nti}} 
+\end{figure}
+
+Y esa figura da lugar al siguiente gráfico, que confirma la impresión
+de que hay una persona que está {\em enmedio}: es la {\em estrella}
+que aparece en la gráfica \ref{fig:nti} y, además, une partes
+separadas de la red. Suprimiendo ese nodo, cinco nodos (que son un
+porcentaje considerable de la red) se quedarían aislados, y otra zona
+(por ejemplo, Eduardo Sánchez) perdería un {\em atajo} a gran parte de
+la red. Y eso se ve reflejado en el cálculo de la centralidad, que es
+el que aparece en la figura \ref{fig:nti:fb}
+
+\begin{figure}[h]
+\centerline{\includegraphics[width=10cm]{red-nti.eps}}
+\caption{Betweenness de Freeman de la red social del curso de Nuevas
+Tecnologías de Internet. \label{fig:nti:fb}} 
+\end{figure}
+
+
+\bibliographystyle{apalike}
+\bibliography{coauthorship,geneura,trend_social,rs}
+
+\end{document}
